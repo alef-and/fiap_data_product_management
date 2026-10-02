@@ -1,0 +1,21 @@
+name: 'health_data_product'
+version: '1.0.0'
+config-version: 2
+
+profile: 'health_data_product'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  health_data_product:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

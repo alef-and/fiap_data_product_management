@@ -1,0 +1,36 @@
+TITULO: Data Product Management & Value Delivery
+
+================================
+Avaliação Final: Regras Gerais
+================================
+
+Domínio de Negócio: Livre escolha do grupo (Fintech, Varejo,
+Saúde, Logística, etc.);
+
+Foco Central: Garantia de valor ao negócio através de contratos,
+confiabilidade e qualidade.
+
+================================
+Trilha: Engenharia e Qualidade
+================================
+
+Foco em Modelagem dbt, Model Contracts e Automação de Testes.
+
+• Mandatório: Pipeline analítico no dbt (Staging + Mart) com Model
+Contract ativo (contract: {enforced: true}) em pelo menos um
+modelo.
+
+• Bônus 1 (Testes Estatísticos): Implementação de asserções
+estatísticas utilizando o pacote dbt-expectations além dos testes
+genéricos nativos.
+
+• Bônus 2 (Regra de Negócio): Criação de teste singular em
+SQL (tests/*.sql) para validação de regra de negócio complexa ou
+integridade cruzada.
+
+• Bônus 3 (DAG Circuit Breaker): Simulação de injeção de dados
+corrompidos demonstrando o bloqueio da esteira antes de atingir o
+consumidor.
+
+IMPORTANTE: Evidenciar o passo-a-passo de como a Solução foi construída
+e/ou o quê ela faz.

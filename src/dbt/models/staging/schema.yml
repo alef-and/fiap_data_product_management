@@ -1,0 +1,70 @@
+version: 2
+
+# Testes da camada Staging: falhas aqui disparam o Circuit Breaker do dbt build (o Mart é pulado).
+models:
+  - name: stg_appointments
+    description: "Atendimentos médicos padronizados e tipados a partir da fonte bruta."
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          arguments:
+            min_value: 500
+            max_value: 1500
+    columns:
+      - name: appointment_id
+        description: "Identificador único do atendimento."
+        data_tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              arguments:
+                regex: "^ATD-[0-9]{6}$"
+      - name: patient_id
+        description: "Identificador do paciente."
+        data_tests:
+          - not_null
+      - name: provider_id
+        description: "Identificador do médico/prestador."
+        data_tests:
+          - not_null
+      - name: status
+        description: "Status do atendimento."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['COMPLETED', 'CANCELLED', 'NO_SHOW', 'DENIED']
+      - name: health_plan
+        description: "Fonte pagadora."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['SUS', 'PARTICULAR', 'VIDA_PLENA', 'SAUDE_MAIS', 'BEM_ESTAR']
+      - name: care_type
+        description: "Caráter do atendimento."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['ELECTIVE', 'EMERGENCY']
+      - name: billed_amount
+        description: "Valor bruto faturado (R$)."
+        data_tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0.01
+                max_value: 5000
+      - name: denied_amount
+        description: "Valor glosado (R$)."
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: copay_amount
+        description: "Valor de coparticipação (R$)."
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: appointment_at
+        description: "Data e hora do atendimento."
+        data_tests:
+          - not_null

@@ -1,0 +1,28 @@
+# Quality Gate de ingestão (SodaCL) sobre a tabela bruta, executado antes do dbt.
+checks for appointments:
+  # 1. Integridade estrutural e volumetria
+  - row_count > 0
+  - missing_count(appointment_id) = 0
+  - duplicate_count(appointment_id) = 0
+  - invalid_count(appointment_id) = 0:
+      valid regex: ^ATD-[0-9]{6}$
+  - missing_count(patient_id) = 0
+  - missing_count(provider_id) = 0
+
+  # 2. Regras financeiras do faturamento
+  - missing_count(billed_amount) = 0
+  - min(billed_amount) > 0
+  - max(billed_amount) <= 5000
+  - min(denied_amount) >= 0
+  - min(copay_amount) >= 0
+
+  # 3. Valores categóricos válidos
+  - invalid_count(status) = 0:
+      valid values: ['COMPLETED', 'CANCELLED', 'NO_SHOW', 'DENIED']
+  - invalid_count(health_plan) = 0:
+      valid values: ['SUS', 'PARTICULAR', 'VIDA_PLENA', 'SAUDE_MAIS', 'BEM_ESTAR']
+  - invalid_count(care_type) = 0:
+      valid values: ['ELECTIVE', 'EMERGENCY']
+
+  # 4. Integridade temporal
+  - missing_count(appointment_at) = 0

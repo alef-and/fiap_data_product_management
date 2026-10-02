@@ -1,0 +1,5 @@
+# Dependencias do Data Product de Faturamento Hospitalar (dbt + DuckDB + Soda Core)
+dbt-duckdb>=1.8.0
+soda-core-duckdb>=3.0.0,<4
+# Soda Core 3 importa distutils (removido no Python 3.12); o setuptools fornece o shim
+setuptools

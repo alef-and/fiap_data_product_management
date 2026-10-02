@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw_sources
+    description: "Dados brutos do sistema de faturamento hospitalar (gerados por setup_duckdb.py)."
+    schema: main
+    tables:
+      - name: appointments
+        description: "Atendimentos médicos brutos com valores faturados, glosas e coparticipação."

@@ -1,0 +1,85 @@
+version: 2
+
+models:
+  - name: fct_billed_appointments
+    description: "Mart de atendimentos médicos realizados e faturados (Data Product de Consumo do Faturamento Hospitalar)."
+    config:
+      contract:
+        enforced: true
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          arguments:
+            min_value: 500
+            max_value: 1000
+    columns:
+      - name: appointment_id
+        description: "Identificador único do atendimento."
+        data_type: varchar
+        constraints:
+          - type: not_null
+          - type: primary_key
+        data_tests:
+          - unique
+          - not_null
+      - name: patient_id
+        description: "Identificador do paciente."
+        data_type: varchar
+        constraints:
+          - type: not_null
+      - name: provider_id
+        description: "Identificador do médico/prestador."
+        data_type: varchar
+        constraints:
+          - type: not_null
+      - name: specialty
+        description: "Especialidade médica do atendimento."
+        data_type: varchar
+      - name: procedure_code
+        description: "Código do procedimento (padrão TUSS)."
+        data_type: varchar
+      - name: health_plan
+        description: "Fonte pagadora (SUS, PARTICULAR ou convênio)."
+        data_type: varchar
+      - name: care_type
+        description: "Caráter do atendimento (ELECTIVE ou EMERGENCY)."
+        data_type: varchar
+      - name: billed_amount
+        description: "Valor bruto faturado (R$)."
+        data_type: double
+        constraints:
+          - type: not_null
+        data_tests:
+          - dbt_expectations.expect_column_mean_to_be_between:
+              arguments:
+                min_value: 400
+                max_value: 1400
+      - name: denied_amount
+        description: "Valor glosado pela fonte pagadora (R$)."
+        data_type: double
+      - name: copay_amount
+        description: "Valor de coparticipação pago pelo paciente (R$)."
+        data_type: double
+      - name: net_amount
+        description: "Valor líquido faturado (billed_amount - denied_amount)."
+        data_type: double
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: plan_receivable
+        description: "Valor a receber da fonte pagadora (net_amount - copay_amount)."
+        data_type: double
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: status
+        description: "Status do atendimento (sempre COMPLETED neste mart)."
+        data_type: varchar
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['COMPLETED']
+      - name: appointment_at
+        description: "Data e hora do atendimento."
+        data_type: timestamp
